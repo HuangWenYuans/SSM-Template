@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hwy.mapper.ProductMapper">
+
+    <delete id="deleteProducts">
+        delete from t_product where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="pageQueryData" resultType="Product">
+        select * from t_product
+        <where>
+            <if test="queryText != null">
+                and name like concat('%',#{queryText},'%')
+            </if>
+        </where>
+        order by id asc limit #{start},#{size}
+    </select>
+
+    <select id="pageQueryCount" resultType="int">
+        select count(*) from t_product
+        <where>
+            <if test="queryText != null">
+                and name like concat('%',#{queryText},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertProduct">
+        insert into t_product(id,name,price,introduction,stock) values
+        (default ,#{name},#{price},#{introduction},#{stock})
+    </insert>
+
+    <update id="updateProduct">
+      update t_product set
+      name=#{name},price=#{price},introduction=#{introduction},stock=#{stock}
+      where id=#{id}
+    </update>
+
+</mapper>
